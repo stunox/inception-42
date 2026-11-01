@@ -1,6 +1,8 @@
 COMPOSE_BASE = docker compose -f srcs/docker-compose.yml --env-file srcs/.env
 COMPOSE = $(COMPOSE_BASE) --profile bonus
 
+USERNAME =sed -n 's/^LOGIN=//p' srcs/.env
+
 .PHONY: all setup build up bonus down stop start restart logs ps clean fclean re
 
 all: up
@@ -34,6 +36,21 @@ logs: setup
 
 ps: setup
 	$(COMPOSE) ps
+
+backup: setup
+	$(COMPOSE) exec backup backup
+
+backup-check: setup
+	sudo sh -c 'gunzip -t /home/$(USERNAME)/data/backups/db-*.sql.gz && tar -tzf /home/$(USERNAME)/data/backups/wordpress-*.tar.gz | head -3'
+
+backup-restore: setup
+	sudo sh -c 'gunzip -c /home/$(USERNAME)/data/backups/db-AAAAMMJJ-HHMMSS.sql.gz' | \
+ 		 $(COMPOSE) exec -T mariadb sh -c 'mariadb -uroot -p"$(cat /run/secrets/db_root_password)" wordpress'
+
+backup-restore-wp: setup
+	$(COMPOSE) stop wordpress nginx
+	sudo tar -xzf /home/$(USERNAME)/data/backups/wordpress-AAAAMMJJ-HHMMSS.tar.gz -C /home/$(USERNAME)/data/wordpress
+	$(COMPOSE) start wordpress nginx
 
 clean: setup
 	$(COMPOSE) down
