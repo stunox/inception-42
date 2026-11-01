@@ -53,32 +53,33 @@ backup-list: setup
 	@find "$(BACKUP_DIR)" -maxdepth 1 -type f -name 'wordpress-*.tar.gz' -printf '  %f\n' | sort
 
 
+
 backup-check: setup
 	@set -e; \
 	invalid=0; \
 	if ! find "$(BACKUP_DIR)" -maxdepth 1 -type f -name 'db-*.sql.gz' | grep -q .; then \
 		echo "No database backups found"; exit 1; \
 	fi; \
-	for file in "$(BACKUP_DIR)"/db-*.sql.gz "$(BACKUP_DIR)"/wordpress-*.tar.gz; do \
-		[ -f "$$file" ] || continue; \
+	for file in "$(BACKUP_DIR)"/db-*.sql.gz; do \
 		echo "Checking $$file"; \
-		if [[ "$$file" == *db-*.sql.gz ]]; then \
-			if ! sudo gunzip -t "$$file" 2>/dev/null; then \
+		if ! sudo gunzip -t "$$file"; then \
+			echo "ERROR: Invalid or corrupted backup: $$file"; \
+			echo "You can delete it with: make backup-delete BACKUP=$$file"; \
+			invalid=1; \
+		fi; \
+	done; \
+	for file in "$(BACKUP_DIR)"/wordpress-*.tar.gz; do \
+		if [ -f "$$file" ]; then \
+			echo "Checking $$file"; \
+			if ! sudo tar -tzf "$$file" > /dev/null; then \
 				echo "ERROR: Invalid or corrupted backup: $$file"; \
-				invalid=1; \
-			fi; \
-		else \
-			if ! sudo tar -tzf "$$file" > /dev/null 2>&1; then \
-				echo "ERROR: Invalid or corrupted backup: $$file"; \
+				echo "You can delete it with: make backup-delete BACKUP=$$file"; \
 				invalid=1; \
 			fi; \
 		fi; \
 	done; \
 	if [ "$$invalid" -ne 0 ]; then \
-		echo ""; \
-		echo "Some backups are invalid or corrupted."; \
-		echo "You can remove them using:"; \
-		echo "  make backup-delete BACKUP=<backup-file>"; \
+		echo "Backup check completed with errors"; \
 		exit 1; \
 	fi; \
 	echo "All backups checked successfully"
