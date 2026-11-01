@@ -64,7 +64,7 @@ backup-check: setup
 		echo "Checking $$file"; \
 		if ! sudo gunzip -t "$$file"; then \
 			echo "ERROR: Invalid or corrupted backup: $$file"; \
-			echo "You can delete it with: make backup-delete BACKUP=$$file"; \
+			echo "You can delete it with: make backup-delete BACKUP=$$(basename "$$file")"; \
 			invalid=1; \
 		fi; \
 	done; \
@@ -73,7 +73,7 @@ backup-check: setup
 			echo "Checking $$file"; \
 			if ! sudo tar -tzf "$$file" > /dev/null; then \
 				echo "ERROR: Invalid or corrupted backup: $$file"; \
-				echo "You can delete it with: make backup-delete BACKUP=$$file"; \
+				echo "You can delete it with: make backup-delete BACKUP=$$(basename "$$file")"; \
 				invalid=1; \
 			fi; \
 		fi; \
