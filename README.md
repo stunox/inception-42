@@ -17,6 +17,8 @@ The persistent database and website files use named Docker volumes backed by `/h
 
 The source tree contains one Dockerfile and its configuration/entrypoint files for each of NGINX, WordPress/PHP-FPM, and MariaDB. `srcs/docker-compose.yml` defines the services, secrets, volumes, and private network.
 
+It also contains the `bonus/` directory, with a file transfer protocol (FTP) service, Adminer (to manage the database), redis cache, a static website, and a backup service. 
+
 ## Instructions
 
 Run the project from the root of this repository inside your Linux virtual machine. Install Docker Engine with the Compose plugin and Git first. The project is configured for the 42 login `<login>` and the domain `<login>.42.fr`. Add a hosts-file entry mapping `<login>.42.fr` to the VM's IP address. The domain must resolve to the VM from the computer/browser used to open the site.

@@ -30,6 +30,19 @@ Equivalent Compose commands use `docker compose -f srcs/docker-compose.yml --env
 
 The named `database` volume stores MariaDB files at `/home/<login>/data/database` on the VM. The named `wordpress_files` volume stores WordPress files at `/home/<login>/data/wordpress`. Container rebuilds and `make down` preserve these directories. `make fclean` removes the named volumes; the host data directories may need to be emptied by the developer if a fully fresh initialization is required.
 
+### Backups
+
+As for the last bonus part (any additional features), I've added a backup service, and added utilities commands to the Makefile. The backups are not cleaned when doing `make fclean`, so it prevents accidental deletion of important data.
+
+The different commands are : 
+- `make backup` : creates a backup of the database and wordpress files in the `backups` directory.
+- `make backup-check` : checks the integrity of the backup files.
+- `make backup-list`: lists the backup files in the `backups` directory.
+- `make backup-restore`: restores the database from the specified backup file.
+- `make backup-restore-wp`: restores the wordpress files from the specified backup file.
+- `make backup-delete`: deletes the specified backup file.
+- `make backup-delete-all`: deletes all the backup files in the `backups` directory (dangerous btw).
+
 ## Validation checklist
 
 - Run `docker compose ... config` and review the resolved volume paths, secret files, network, and published ports.
@@ -38,3 +51,4 @@ The named `database` volume stores MariaDB files at `/home/<login>/data/database
 - Load the site, sign in as both WordPress users, and confirm the administrator name contains neither prohibited word.
 - Restart the stack and confirm both the database and uploaded WordPress files persist.
 - Review the repository and Git status to make sure no generated secret or password is tracked.
+- Check the backup system

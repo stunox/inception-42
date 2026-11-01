@@ -8,6 +8,16 @@ BACKUP_DIR := /home/$(USERNAME)/data/backups
 
 all: up
 
+prepare:
+	@if [ ! -f srcs/.env ]; then \
+		echo "No .env file found. Creating one from .env.example..."; \
+		$(MAKE) create-env; \
+	fi
+	@echo "You can fill in the .env file."
+
+create-env:
+	@cp srcs/.env.example srcs/.env
+
 setup:
 	sh srcs/requirements/tools/init.sh
 
