@@ -33,4 +33,4 @@ Useful commands are `make ps`, `make logs`, `make stop`, `make start`, `make res
 - [WordPress documentation](https://wordpress.org/documentation/)
 - [WP-CLI documentation](https://make.wordpress.org/cli/handbook/)
 - [MariaDB documentation](https://mariadb.org/documentation/)
-- AI was used to interpret the subject, plan and draft the configuration & documentation, and identify a validation checklist.
+- AI was used to interpret the subject, plan and draft the configuration & documentation, and identify a validation checklist. It was also used to write parts of the scripts and configs.

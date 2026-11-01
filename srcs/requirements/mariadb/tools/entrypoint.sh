@@ -7,6 +7,8 @@ chown -R mysql:mysql /run/mysqld /var/lib/mysql
 
 if [ ! -d /var/lib/mysql/mysql ]; then
     mariadb-install-db --user=mysql --datadir=/var/lib/mysql --auth-root-authentication-method=normal --skip-test-db
+fi
+if [ ! -f /var/lib/mysql/.initialized ]; then
     mariadbd --user=mysql --bootstrap --skip-networking <<SQL
 FLUSH PRIVILEGES;
 ALTER USER 'root'@'localhost' IDENTIFIED BY '${ROOT_PASSWORD}';
@@ -15,6 +17,7 @@ CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';
 GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${DB_USER}'@'%';
 FLUSH PRIVILEGES;
 SQL
+    touch /var/lib/mysql/.initialized
 fi
 
 mariadbd --user=mysql --skip-networking &
@@ -38,5 +41,7 @@ SQL
 
 kill "$TEMP_PID"
 wait "$TEMP_PID" || true
+
+touch /var/lib/mysql/.initialized
 
 exec mariadbd --user=mysql --console
