@@ -15,7 +15,7 @@ build: setup
 	$(COMPOSE_BASE) build
 
 up: build
-	$(COMPOSE_BASE) build
+	$(COMPOSE_BASE) up -d
 
 bonus: setup
 	WP_REDIS_ENABLED=1 $(COMPOSE) up -d --build
@@ -169,6 +169,7 @@ clean: setup
 fclean: setup
 	$(COMPOSE) down --volumes --remove-orphans
 	@login=$$(sed -n 's/^LOGIN=//p' srcs/.env); \
-		sudo rm -rf /home/$$login/data/database/* /home/$$login/data/wordpress/*
+		sudo rm -rf /home/$$login/data/database/* /home/$$login/data/database/.* 2>/dev/null || true; \
+		sudo rm -rf /home/$$login/data/wordpress/* /home/$$login/data/wordpress/.* 2>/dev/null || true
 
 re: fclean all

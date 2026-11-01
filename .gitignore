@@ -1,4 +1,3 @@
 srcs/.env
 secrets/*
-!secrets/.gitkeep
 out.txt
