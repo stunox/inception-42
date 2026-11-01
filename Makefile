@@ -59,17 +59,16 @@ backup-check: setup
 	fi; \
 	for file in "$(BACKUP_DIR)"/db-*.sql.gz; do \
 		echo "Checking $$file"; \
-		gunzip -t "$$file"; \
+		sudo gunzip -t "$$file"; \
 	done; \
 	for file in "$(BACKUP_DIR)"/wordpress-*.tar.gz; do \
 		if [ -f "$$file" ]; then \
 			echo "Checking $$file"; \
-			tar -tzf "$$file" > /dev/null; \
+			sudo tar -tzf "$$file" > /dev/null; \
 		fi; \
 	done; \
 	echo "All backups checked successfully"
 
-# Restore database
 backup-restore: setup
 	@set -e; \
 	backup="$(BACKUP)"; \
@@ -88,11 +87,11 @@ backup-restore: setup
 		echo "Backup not found: $$file"; exit 1; \
 	fi; \
 	echo "Restoring database from $$backup..."; \
-	gunzip -c "$$file" | $(COMPOSE) exec -T mariadb sh -c \
-		'mariadb -uroot -p"$$(cat /run/secrets/db_root_password)" wordpress'; \
+	sudo sh -c 'gunzip -c "$$1"' sh "$$file" | \
+		$(COMPOSE) exec -T mariadb sh -c \
+		'mariadb -uroot -p"$$(cat /run/secrets/db_root_password)" wordpress'
 	echo "Database restored successfully!"
 
-# Restore WordPress files
 backup-restore-wp: setup
 	@set -e; \
 	backup="$(BACKUP)"; \
@@ -117,6 +116,21 @@ backup-restore-wp: setup
 	$(COMPOSE) start wordpress nginx; \
 	trap - EXIT; \
 	echo "WordPress restored successfully!"
+
+backup-delete: setup
+	@set -e; \
+	backup="$(BACKUP)"; \
+	if [ -z "$$backup" ]; then \
+		echo "Usage: make backup-delete BACKUP=<backup>"; \
+		exit 1; \
+	fi; \
+	file="$(BACKUP_DIR)/$$backup"; \
+	if [ ! -f "$$file" ]; then \
+		echo "Backup not found: $$file"; exit 1; \
+	fi; \
+	echo "Deleting backup $$backup..."; \
+	sudo rm -f "$$file"; \
+	echo "Backup deleted successfully!"
 
 clean: setup
 	$(COMPOSE) down

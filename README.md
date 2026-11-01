@@ -25,6 +25,8 @@ Run `make setup` to create missing local secrets and host data directories. Revi
 
 Useful commands are `make ps`, `make logs`, `make stop`, `make start`, `make restart`, and `make down`. `make fclean` also deletes the named volumes and their data.
 
+In the bonus, I added a backup system that creates compressed backups of the database and WordPress files. The backup schedule and retention period are configured in `srcs/.env`. Run `make backup` to create a backup, `make backup-list` to list available backups, and `make backup-restore BACKUP=<backup>` to restore a backup.
+
 ## Resources
 
 - [Docker documentation](https://docs.docker.com/)
