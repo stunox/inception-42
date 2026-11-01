@@ -147,6 +147,22 @@ backup-delete: setup
 	sudo rm -f "$$file"; \
 	echo "Backup deleted successfully!"
 
+backup-delete-all: setup
+	@set -e; \
+	if [ ! -d "$(BACKUP_DIR)" ]; then \
+		echo "No backup directory found: $(BACKUP_DIR)"; \
+		exit 1; \
+	fi; \
+	read -p "Are you sure you want to delete all backups in $(BACKUP_DIR)? \
+	 This action cannot be undone. (y/N): " confirm; \
+	if [ "$$confirm" != "y" ] && [ "$$confirm" != "Y" ]; then \
+		echo "Aborting deletion of all backups."; \
+		exit 1; \
+	fi; \
+	echo "Deleting all backups in $(BACKUP_DIR)..."; \
+	sudo rm -f "$(BACKUP_DIR)"/*; \
+	echo "All backups deleted successfully!"
+
 clean: setup
 	$(COMPOSE) down
 
