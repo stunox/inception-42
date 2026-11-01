@@ -27,12 +27,18 @@ services:
     depends_on:
       mariadb:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+        required: false
     env_file:
       - .env
+    environment:
+      - WP_REDIS_ENABLED=${WP_REDIS_ENABLED:-0}
     secrets:
       - db_password
       - wp_admin_password
       - wp_user_password
+      - redis_password
     volumes:
       - wordpress_files:/var/www/html
     networks:
@@ -62,6 +68,66 @@ services:
       timeout: 5s
       retries: 20
 
+  redis:
+    build: ./requirements/bonus/redis
+    image: redis:inception
+    profiles: ["bonus"]
+    restart: unless-stopped
+    secrets:
+      - redis_password
+    networks:
+      - inception
+    healthcheck:
+      test: ["CMD-SHELL", "REDISCLI_AUTH=$$(cat /run/secrets/redis_password) redis-cli ping | grep -q PONG"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  ftp:
+    build: ./requirements/bonus/ftp
+    image: ftp:inception
+    profiles: ["bonus"]
+    restart: unless-stopped
+    env_file:
+      - .env
+    secrets:
+      - ftp_password
+    ports:
+      - "21:21"
+      - "21100-21110:21100-21110"
+    volumes:
+      - wordpress_files:/var/www/html
+    networks:
+      - inception
+    healthcheck:
+      test: ["CMD-SHELL", "pidof vsftpd"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  static:
+    build: ./requirements/bonus/static
+    image: static:inception
+    profiles: ["bonus"]
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    networks:
+      - inception
+
+  adminer:
+    build: ./requirements/bonus/adminer
+    image: adminer:inception
+    profiles: ["bonus"]
+    restart: unless-stopped
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    networks:
+      - inception
+
 volumes:
   database:
     driver: local
@@ -89,3 +155,7 @@ secrets:
     file: ../secrets/wp_admin_password.txt
   wp_user_password:
     file: ../secrets/wp_user_password.txt
+  redis_password:
+    file: ../secrets/redis_password.txt
+  ftp_password:
+    file: ../secrets/ftp_password.txt

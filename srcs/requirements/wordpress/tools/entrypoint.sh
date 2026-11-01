@@ -28,5 +28,19 @@ if ! wp user get "$WP_USER" --allow-root >/dev/null 2>&1; then
     wp user create "$WP_USER" "$WP_USER_EMAIL" --allow-root --role=author --user_pass="$USER_PASSWORD"
 fi
 
+# Bonus : cache objet Redis
+if [ "${WP_REDIS_ENABLED:-0}" = "1" ]; then
+    REDIS_PASSWORD=$(cat /run/secrets/redis_password)
+    wp config set WP_REDIS_HOST redis --type=constant --allow-root
+    wp config set WP_REDIS_PORT 6379 --raw --type=constant --allow-root
+    wp config set WP_REDIS_PASSWORD "$REDIS_PASSWORD" --type=constant --allow-root
+    wp plugin is-installed redis-cache --allow-root || wp plugin install redis-cache --allow-root
+    wp plugin activate redis-cache --allow-root
+    wp redis enable --allow-root || true
+elif wp plugin is-installed redis-cache --allow-root; then
+    wp redis disable --allow-root || true
+    wp plugin deactivate redis-cache --allow-root
+fi
+
 chown -R www-data:www-data /var/www/html
 exec php-fpm8.2 -F

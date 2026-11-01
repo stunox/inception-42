@@ -1,0 +1,13 @@
+:root { --bg:#f4f7fb; --card:#fff; --text:#1c2733; --accent:#2b7de9; }
+@media (prefers-color-scheme: dark) { :root { --bg:#10161d; --card:#1a232d; --text:#e6edf3; --accent:#5aa2ff; } }
+* { box-sizing: border-box; }
+body { margin:0; font-family: system-ui, sans-serif; background:var(--bg); color:var(--text); }
+main { max-width: 640px; margin: 0 auto; padding: 2rem 1rem; }
+h1 { color: var(--accent); }
+select { font-size:1rem; padding:.4rem; margin-left:.5rem; }
+#now, .day { background:var(--card); border-radius:12px; padding:1rem; margin-top:1rem; box-shadow:0 1px 4px rgba(0,0,0,.1); }
+#now .temp { font-size:3rem; font-weight:700; }
+#days { display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:.75rem; }
+.day { text-align:center; margin-top:.75rem; }
+.day .icon { font-size:2rem; }
+.source { margin-top:2rem; font-size:.8rem; opacity:.7; }

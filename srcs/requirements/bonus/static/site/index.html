@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Météo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <h1>Météo</h1>
+    <label for="city">Ville</label>
+    <select id="city">
+      <option value="48.8566,2.3522">Paris</option>
+      <option value="43.2965,5.3698">Marseille</option>
+      <option value="45.7640,4.8357">Lyon</option>
+      <option value="50.6292,3.0573">Lille</option>
+    </select>
+    <section id="now" aria-live="polite">Chargement…</section>
+    <section id="days"></section>
+    <p class="source">Données : Open-Meteo. Site statique (HTML, CSS, JavaScript) servi par NGINX.</p>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

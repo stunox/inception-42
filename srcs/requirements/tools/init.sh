@@ -6,7 +6,7 @@ if [ ! -f srcs/.env ]; then
 fi
 
 mkdir -p secrets
-for name in db_password db_root_password wp_admin_password wp_user_password; do
+for name in db_password db_root_password wp_admin_password wp_user_password redis_password ftp_password; do
     if [ ! -s "secrets/${name}.txt" ]; then
         openssl rand -hex 24 > "secrets/${name}.txt"
     fi

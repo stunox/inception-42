@@ -19,9 +19,9 @@ The source tree contains one Dockerfile and its configuration/entrypoint files f
 
 ## Instructions
 
-Run the project from the root of this repository inside your Linux virtual machine. Install Docker Engine with the Compose plugin and Git first. The project is configured for the 42 login `nbasheer` and the domain `nbasheer.42.fr`. Add a hosts-file entry mapping `nbasheer.42.fr` to the VM's IP address. The domain must resolve to the VM from the computer/browser used to open the site.
+Run the project from the root of this repository inside your Linux virtual machine. Install Docker Engine with the Compose plugin and Git first. The project is configured for the 42 login `<login>` and the domain `<login>.42.fr`. Add a hosts-file entry mapping `<login>.42.fr` to the VM's IP address. The domain must resolve to the VM from the computer/browser used to open the site.
 
-Run `make setup` to create missing local secrets and host data directories. Review `srcs/.env` and the four files in `secrets/`; the generated passwords are local and must not be committed. `make` builds and starts the stack. Open `https://nbasheer.42.fr/`; the browser will warn that the automatically generated TLS certificate is self-signed. The WordPress login page is at `/wp-login.php` and the administration panel is at `/wp-admin/`.
+Run `make setup` to create missing local secrets and host data directories. Review `srcs/.env` and the four files in `secrets/`; the generated passwords are local and must not be committed. `make` builds and starts the stack. Open `https://<login>.42.fr/`; the browser will warn that the automatically generated TLS certificate is self-signed. The WordPress login page is at `/wp-login.php` and the administration panel is at `/wp-admin/`.
 
 Useful commands are `make ps`, `make logs`, `make stop`, `make start`, `make restart`, and `make down`. `make fclean` also deletes the named volumes and their data.
 
